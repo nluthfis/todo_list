@@ -107,32 +107,41 @@ function Home() {
 
   const handleNotesChange = async (e, id = null, listId) => {
     const { name, value, type, checked } = e.target;
-    // console.log(name, value, type, checked);
+    console.log(name, value, type, checked);
     if (type === "checkbox") {
-      if (name === "statusT") {
-        const [inputType, itemId] = name.split("-");
-        const noteRef = doc(database, "notes", itemId);
+      const [inputType, itemId] = name.split("-");
+      console.log("statusT", inputType, itemId);
+      const noteRef = doc(database, "notes", itemId);
+
+      if (inputType === "statusT") {
         const updatedList = notes.map((item) => {
-          console.log(item);
-          updateDoc(noteRef, {
-            status: checked,
-          });
-          return { ...item, status: checked };
+          console.log("this is statusT");
+          if (item.id === itemId) {
+            console.log("test");
+            const updatedLists = item.list.map((listItem) => {
+              return { ...listItem, status: checked };
+            });
+            return { ...item, list: updatedLists };
+          }
+          return item;
         });
+
+        console.log(updatedList);
         setNotes(updatedList);
       } else {
         const [inputType, itemId] = name.split("-");
-        // console.log(inputType, itemId);
         const noteRef = doc(database, "notes", itemId);
         if (inputType === "statusL") {
           const updatedList = notes.map((item) => {
-            if (item.id === itemId) {
-              updateDoc(noteRef, {
-                status: checked,
-              });
-              return { ...item, status: checked };
-            }
-            return item;
+            console.log(item.list);
+            const updatedList = item.list.map((listItem) => {
+              if (listItem.id === itemId) {
+                console.log("test");
+                return { ...listItem, status: checked };
+              }
+              return listItem;
+            });
+            return { ...item, list: updatedList };
           });
           setNotes(updatedList);
         }
