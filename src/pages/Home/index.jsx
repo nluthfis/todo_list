@@ -107,44 +107,41 @@ function Home() {
 
   const handleNotesChange = async (e, id = null, listId) => {
     const { name, value, type, checked } = e.target;
-    console.log(name, value, type, checked);
+
     if (type === "checkbox") {
       const [inputType, itemId] = name.split("-");
-      console.log("statusT", inputType, itemId);
-      const noteRef = doc(database, "notes", itemId);
 
       if (inputType === "statusT") {
         const updatedList = notes.map((item) => {
-          console.log("this is statusT");
           if (item.id === itemId) {
-            console.log("test");
             const updatedLists = item.list.map((listItem) => {
               return { ...listItem, status: checked };
             });
-            return { ...item, list: updatedLists };
+            return { ...item, list: updatedLists, status: checked };
           }
           return item;
         });
-
         console.log(updatedList);
         setNotes(updatedList);
-      } else {
-        const [inputType, itemId] = name.split("-");
-        const noteRef = doc(database, "notes", itemId);
-        if (inputType === "statusL") {
-          const updatedList = notes.map((item) => {
-            console.log(item.list);
+      } else if (inputType === "statusL") {
+        const updatedList = notes.map((item) => {
+          if (item.id === id) {
             const updatedList = item.list.map((listItem) => {
               if (listItem.id === itemId) {
-                console.log("test");
                 return { ...listItem, status: checked };
               }
               return listItem;
             });
-            return { ...item, list: updatedList };
-          });
-          setNotes(updatedList);
-        }
+            const allListItemsChecked = updatedList.every(
+              (listItem) => listItem.status
+            );
+            return { ...item, list: updatedList, status: allListItemsChecked };
+          }
+          return item;
+        });
+        console.log(updatedList);
+
+        setNotes(updatedList);
       }
     } else {
       if (name === "listInput") {
@@ -171,6 +168,7 @@ function Home() {
               });
             return updatedNote;
           });
+
           setNotes(updatedList);
         }
       }
