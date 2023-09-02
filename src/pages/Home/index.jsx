@@ -60,7 +60,7 @@ function Home() {
     } else {
       navigate("/login");
     }
-  }, [user, notes]);
+  }, [user]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
